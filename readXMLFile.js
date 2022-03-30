@@ -11,10 +11,6 @@ const xmlRead = () => {
     /* sheetData to json */
     const jsonData = xlsx.utils.sheet_to_json(sheet);
 
-    for (var trashcanData of jsonData) {
-        const address = trashcanData.district + " " + trashcanData.road + " " + trashcanData.address;
-    }
-
     return jsonData;
 }
 
