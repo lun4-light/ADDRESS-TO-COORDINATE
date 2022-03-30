@@ -1,0 +1,11 @@
+## static files (input, output)
+static/
+
+## node_modules
+node_modules
+
+## babel settings
+.babelrc
+
+## API KEYS
+keys.js

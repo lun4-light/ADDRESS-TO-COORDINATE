@@ -1,5 +1,15 @@
 import axios from 'axios';
 import { KAKAOKEY } from './keys'
+
+const makeCoordinateArray = ( index, x, y ) => {
+    const array = [];
+    array.push(index);
+    array.push(x);
+    array.push(y);
+
+    return array;
+}
+
 const addressToCoordinate = async ( jsonData ) => {    
     const result = [];
 
@@ -15,26 +25,19 @@ const addressToCoordinate = async ( jsonData ) => {
                 Authorization: `KakaoAK ${KAKAOKEY}`,
             },
         });
+        
+        var arrayData;
 
         if (!data.documents[0]) {
-            continue;
+            arrayData = makeCoordinateArray(trashcanData.index, -1, -1);
+        }
+        else { 
+            arrayData = makeCoordinateArray(trashcanData.index, data.documents[0].x, data.documents[0].y);
         }
 
-        const coordinate = [];
-
-        coordinate.push(trashcanData.index);
-        coordinate.push(data.documents[0].x);
-        coordinate.push(data.documents[0].y);
-
-        result.push(coordinate);
+        result.push(arrayData);
     }
-
-    var len = result.length;
-
-    for (var idx = 0; idx < len; idx++) {
-        console.log(result[idx]);
-    }
-
+    
     return result;
 }
 
