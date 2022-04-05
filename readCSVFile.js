@@ -20,12 +20,13 @@ const csvRead = async () => {
     })
 }
 
-const busToMap = (jsonData) => {
+const busToMap = async () => {
+    const jsonData = await csvRead();
     const result = new Map();
 
     for (var busStation of jsonData) {
-        const key = busStation.ARSID;
-        const value = [busStation.X, busStation.Y];
+        const key = parseInt(busStation.ARSID);
+        const value = [parseFloat(busStation.X), parseFloat(busStation.Y)];
 
         result.set(key, value);
     }
