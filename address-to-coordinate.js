@@ -10,6 +10,22 @@ const makeCoordinateArray = ( index, x, y ) => {
     return array;
 }
 
+const searchByQuery = async ( searchType, address ) => {
+    const searchURI =
+        "https://dapi.kakao.com/v2/local/search/" +
+        searchType +
+        ".json?query=" +
+        encodeURI(address);
+
+    const { searchData } = await axios.get(searchURI, {
+        headers: {
+            Authorization: `KakaoAK ${KAKAOKEY}`,
+        },
+    });
+
+    return searchData;
+}
+
 const addressToCoordinate = async ( jsonData, busData ) => {
     const result = [];
 
@@ -21,23 +37,20 @@ const addressToCoordinate = async ( jsonData, busData ) => {
             }
         }
         else {
-            const address = trashcanData.address;
-
-            const url = 
-            "https://dapi.kakao.com/v2/local/search/address.json?query=" +
-            encodeURI(address);
-        
-            const { data } = await axios.get(url, {
-                headers: {
-                    Authorization: `KakaoAK ${KAKAOKEY}`,
-                },
-            });
+            const addressSearchData = searchByQuery("address", address);
     
-            if (!data.documents[0]) {
-                result.push(makeCoordinateArray(trashcanData.index, -1, -1));
+            if (!addressSearchData.documents[0]) {
+                const keywordSearchData = searchByQuery("keyword", address);
+
+                if (!keywordSearchData.documents[0]) {
+                    result.push(makeCoordinateArray(trashcanData.index, -1, -1));
+                }
+                else {
+                    result.push(makeCoordinateArray(trashcanData.index, keywordSearchData.documents[0].x, keywordSearchData.documents[0].y));
+                }
             }
             else {
-                result.push(makeCoordinateArray(trashcanData.index, data.documents[0].x, data.documents[0].y)); 
+                result.push(makeCoordinateArray(trashcanData.index, addrSearchData.documents[0].x, addrSearchData.documents[0].y)); 
             }
         }
     }
